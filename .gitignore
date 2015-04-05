@@ -57,3 +57,5 @@ target/
 ### Flask stuff
 flask/
 
+###PyCharm
+.idea/workspace.xml
