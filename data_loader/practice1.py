@@ -1,5 +1,5 @@
 __author__ = 'jorge.astorga'
-from sqlalchemy import create_engine,MetaData,Table,Column,Float,Date,Integer,String
+from sqlalchemy import create_engine,MetaData,Table,Column,Float,Date,Integer,String,select
 from datetime import datetime
 
 #Constructs a transaction array list
@@ -120,22 +120,42 @@ def createDatabase():
 	return transactionsTable
 
 
-fileHandle = open('history.csv')
-SQLITE_DB_PATH = 'sqlite:///data.db'
+def readTransactions():
+	engine = create_engine('sqlite:///data.db', echo=True)
 
-transactionsByFund = dict()
-transactionsList = list()
+	metaData = MetaData()
+	transactionsTable = Table('transactions',
+	 	metaData, 
+	 	autoload=True, 
+	 	autoload_with=engine)
 
-#database engine
-metaData = None
-transactionsTable = None
+	s = select([transactionsTable])
+
+	conn = engine.connect()
+	results = conn.execute(s)
+
+	for row in results:
+		print(row)
 
 
-getTransactionsList(transactionsList)
-transactionsTable = createDatabase()
-populateDatabase(transactionsTable,transactionsList)
-#getTransactionsByFund(transactionsByFund)
-#printTransactions(transactionsByFund)
+if __name__ == '__main__':
+
+	fileHandle = open('history.csv')
+	SQLITE_DB_PATH = 'sqlite:///data.db'
+
+	transactionsByFund = dict()
+	transactionsList = list()
+
+	#database engine
+	metaData = None
+	transactionsTable = None
+
+
+	getTransactionsList(transactionsList)
+	transactionsTable = createDatabase()
+	populateDatabase(transactionsTable,transactionsList)
+	#getTransactionsByFund(transactionsByFund)
+	#printTransactions(transactionsByFund)
 
 
 	
